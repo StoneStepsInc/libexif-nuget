@@ -106,7 +106,7 @@ jobs:
     - name: Build x64/Debug
       working-directory: ${{ env.LIBEXIF_DNAME }}
       run: |
-        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc DEBUG=1
 
     - name: Collect x64/Debug artifacts
@@ -120,13 +120,13 @@ jobs:
     - name: Clean-up x64/Debug
       working-directory: ${{ env.LIBEXIF_DNAME }}
       run: |
-        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc DEBUG=1 clean
 
     - name: Build x64/Release
       working-directory: ${{ env.LIBEXIF_DNAME }}
       run: |
-        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc
 
     - name: Collect x64/Release artifacts
@@ -140,7 +140,7 @@ jobs:
     - name: Clean-up x64/Release
       working-directory: ${{ env.LIBEXIF_DNAME }}
       run: |
-        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc clean
 
     - name: Copy license
