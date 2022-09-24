@@ -104,7 +104,7 @@ jobs:
         patch --unified --input ..\patches\config.h.patch config.h
 
     - name: Build x64/Debug
-      working-directory: ${{ env.LIBEXIF_DNAME }}
+      working-directory: libexif-${{ env.PKG_VER }}
       run: |
         call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc DEBUG=1
@@ -118,13 +118,13 @@ jobs:
         copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.pdb" "nuget\lib\x64\Debug\"
 
     - name: Clean-up x64/Debug
-      working-directory: ${{ env.LIBEXIF_DNAME }}
+      working-directory: libexif-${{ env.PKG_VER }}
       run: |
         call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc DEBUG=1 clean
 
     - name: Build x64/Release
-      working-directory: ${{ env.LIBEXIF_DNAME }}
+      working-directory: libexif-${{ env.PKG_VER }}
       run: |
         call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc
@@ -138,7 +138,7 @@ jobs:
         copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.pdb" "nuget\lib\x64\Release\"
 
     - name: Clean-up x64/Release
-      working-directory: ${{ env.LIBEXIF_DNAME }}
+      working-directory: libexif-${{ env.PKG_VER }}
       run: |
         call "${{ env.VCVARSALL }}" x64
         nmake -f ..\devops\Makefile.msc clean
