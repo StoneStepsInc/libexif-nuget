@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>StoneSteps.libexif.Static</id>
+    <version>0.6.24</version>
+    <authors>Lutz Mueller, Curtis Galloway, and others</authors>
+    <owners>Stone Steps (package)</owners>
+    <license type="file">licenses\COPYING</license>
+    <projectUrl>https://github.com/StoneStepsInc/libexif-nuget</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>libexif is a library for parsing, editing, and saving EXIF data</description>
+    <releaseNotes>
+Package Notes:
+
+  * Static libraries for Debug/Release configurations, x64 platform
+  * Built in Visual C++ 2022, against Debug/Release MT/DLL MSVC CRT
+  * Localization for EXIF field names is not enabled.
+
+See libexif libexif release for details:
+
+https://github.com/libexif/libexif/releases/tag/v0.6.24
+    </releaseNotes>
+    <copyright>Jean-loup Gailly, Mark Adler</copyright>
+    <tags>libexif,native,library</tags>
+  </metadata>
+  <files>
+   <file src="README.txt" target=""/>
+   <file src="licenses\COPYING" target="licenses\COPYING"/>
+   <file src="build\**\*" target="build"/>
+  </files>
+</package>

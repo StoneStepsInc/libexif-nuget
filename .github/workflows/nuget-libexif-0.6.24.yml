@@ -1,0 +1,186 @@
+#
+# The version part is immutable in the name, but the package revision
+# component after the dash should be kept in sync with `PKG_REV`.
+# GitHub doesn't allow variables in the workflow names, so this cannot
+# be automated.
+#
+# For new libexif versions, rename this file with a new version name to
+# restart build numbers from `1`. This is necessary because GitHub
+# maintains build numbers per workflow file name.
+#
+name: libexif v0.6.24-1
+
+#
+# When `publish-package` is set to `yes`, the workflow will build
+# the package and publish it to nuget.org. Otherwise, a package
+# will be built as an artifact and may be downloaded via GitHub UI.
+#
+# Published Nuget package will use the 4th version component as a
+# package revision number because Nuget lacks package revision
+# support.
+#
+# Without publishing, a Nuget package will be uploaded as an artifact
+# of the workflow run and will be named using a pre-release version,
+# which is an unfortunate workaround for a lack of build promotion
+# support between GitHub and Nuget. This means that true pre-release
+# packages will conflict with CI packages, but for this repository
+# this is not an issue that will ever need to be addressed.
+#
+on:
+  workflow_dispatch:
+    inputs:
+      publish-package:
+        description: Publish Nuget Package?
+        required: false
+
+#
+# For each new libexif release, change these variables:
+#
+#   * PKG_VER
+#   * LIBEXIF_FNAME
+#   * LIBEXIF_SHA256
+#
+# Check that the directory name within the downloaded source archive
+# matches the name referenced in `LIBEXIF_DNAME`.
+#
+# For each change in `PKG_VER`, `PKG_REV` must be reset to `1` (one).
+#
+# Package revision should be incremented by one every time package
+# content is changed in any way, such as changing compiler options,
+# adding or removing files, changing any text in README files, etc.
+#
+env:
+  PKG_VER: 0.6.24
+  PKG_REV: 1
+  BUILD_NUMBER: ${{ github.run_number }}
+
+  #
+  # GitHub won't allow referencing `env` within this section, which
+  # means that in order to reference the libexif source directory we
+  # need to concatenate variables in-place (e.g. `libexif-${{ env.PKG_VER }}`)
+  # or to define them in each step where the source directory is
+  # referenced, which is what's done in this pipeline (`LIBEXIF_DNAME`).
+  #
+  LIBEXIF_FNAME: libexif-0.6.24.zip
+  LIBEXIF_SHA256: 12fa9fc73d3610f752f9a0ef5da1269e76b1caab7aca83f5174ca0c9565ca802
+
+  # for VS Community Edition, replace `Enterprise` with `Community` in the path
+  VCVARSALL: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall'
+
+  # Nuget Gallery (www.nuget.org) publish URL
+  NUGET_PUB_URL: https://api.nuget.org/v3/index.json
+
+defaults:
+  run:
+    shell: cmd
+
+jobs:
+  #
+  # Downloads libexif source archive, checks it integrity against the
+  # published SHA-256 signature and patches the sourcefor this build.
+  #
+  prep-libexif-source:
+    name: Prepare libexif Source
+    runs-on: windows-2019
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Download libexif
+      run: curl --output ${{ env.LIBEXIF_FNAME }} https://github.com/libexif/libexif/releases/download/v${{ env.PKG_VER }}/${{ env.LIBEXIF_FNAME }}
+    
+    - name: Verify libexif checksum
+      run: 7z h -scrcSHA256 ${{ env.LIBEXIF_FNAME }} | findstr /C:"SHA256 for data" | call devops\check-sha256 "${{ env.LIBEXIF_SHA256 }}"
+
+    - name: Extract libexif
+      run: |
+        7z x ${{ env.LIBEXIF_FNAME }}
+
+    - name: Patch source
+      working-directory: libexif-${{ env.PKG_VER }}
+      run: |
+        copy /Y config.h.in config.h
+        patch --unified --input ..\patches\config.h.patch config.h
+
+    - name: Build x64/Debug
+      working-directory: ${{ env.LIBEXIF_DNAME }}
+      run: |
+        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        nmake -f ..\devops\Makefile.msc DEBUG=1
+
+    - name: Collect x64/Debug artifacts
+      env:
+        LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
+      run: |
+        mkdir "lib\x64\Debug
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.lib" "nuget\lib\x64\Debug\"
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.pdb" "nuget\lib\x64\Debug\"
+
+    - name: Clean-up x64/Debug
+      working-directory: ${{ env.LIBEXIF_DNAME }}
+      run: |
+        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        nmake -f ..\devops\Makefile.msc DEBUG=1 clean
+
+    - name: Build x64/Release
+      working-directory: ${{ env.LIBEXIF_DNAME }}
+      run: |
+        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        nmake -f ..\devops\Makefile.msc
+
+    - name: Collect x64/Release artifacts
+      env:
+        LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
+      run: |
+        mkdir "lib\x64\Release
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.lib" "nuget\lib\x64\Release\"
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.pdb" "nuget\lib\x64\Release\"
+
+    - name: Clean-up x64/Release
+      working-directory: ${{ env.LIBEXIF_DNAME }}
+      run: |
+        call "${{ env.VCVARSALL }}" %VCVARS_ARGS%
+        nmake -f ..\devops\Makefile.msc clean
+
+    - name: Copy license
+      env:
+        LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
+      run: |
+        mkdir nuget\licenses
+        copy ${{ env.LIBEXIF_DNAME }}\COPYING nuget\licenses\
+
+    - name: Copy header files
+      env:
+        LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
+      run: |
+        mkdir nuget\build\native\include
+        copy ${{ env.LIBEXIF_DNAME }}\config.h nuget\build\native\include\
+        xcopy /Y /S ${{ env.LIBEXIF_DNAME }}\libexif\*.h nuget\build\native\include\
+
+      # this is an unconventional use of the pre-release version - see README.md
+    - name: Make CI Nuget package
+      if: ${{ github.event.inputs.publish-package != 'yes' }}
+      run: |
+        nuget pack nuget\StoneSteps.libexif.Static.nuspec -Suffix "ci.%BUILD_NUMBER%" -Version ${{ env.PKG_VER }}.${{ env.PKG_REV }}
+
+    - name: Upload CI Nuget package
+      if: ${{ github.event.inputs.publish-package != 'yes' }}
+      uses: actions/upload-artifact@v2.2.1
+      with:
+        name: libexif CI Nuget package
+        path: StoneSteps.libexif.Static.${{ env.PKG_VER }}.${{ env.PKG_REV }}-ci.${{ env.BUILD_NUMBER }}.nupkg
+
+      #
+      # Use `-Version` explicitly to override the version in the manifest,
+      # so we can usurp the 4th version component for the package revision.
+      #
+    - name: Make Nuget package
+      if: ${{ github.event.inputs.publish-package == 'yes' }}
+      run: |
+        nuget pack nuget\StoneSteps.libexif.Static.nuspec -Version ${{ env.PKG_VER }}.${{ env.PKG_REV }}
+
+    - name: Publish Nuget package
+      if: ${{ github.event.inputs.publish-package == 'yes' }}
+      run: |
+        nuget push StoneSteps.libexif.Static.${{ env.PKG_VER }}.${{ env.PKG_REV }}.nupkg -Source ${{ env.NUGET_PUB_URL }} -ApiKey "${{ secrets.NUGET_API_KEY }}" -NonInteractive

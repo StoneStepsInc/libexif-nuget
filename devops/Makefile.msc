@@ -1,0 +1,112 @@
+SRCDIR = libexif
+
+# build in the current directory tree, unless directory was supplied
+!IFNDEF BLDDIR
+!IFNDEF DEBUG
+BLDDIR = build\Release
+!ELSE
+BLDDIR = build\Debug
+!ENDIF
+!ENDIF
+
+#
+# /Zi generates a debug symbols file
+# /Fd places the debug symbols into the build directory
+# /D_CRT_SECURE_NO_WARNINGS disables misleading "unsafe" warnings for strcpy, etc
+#
+CFLAGS  = /nologo /W3 /Zi /Fd$(BLDDIR)\libexif.pdb /D_CRT_SECURE_NO_WARNINGS
+
+#
+# /MDd uses a debug version of MSVC CRT in a DLL
+# /MD uses MSVC CRT in a DLL
+# /Od disables optimizations
+# /GL enables whole program optimization
+# /O2 favors fast code
+#
+!IFDEF DEBUG
+CFLAGS = $(CFLAGS) /MDd /Od
+!ELSE
+CFLAGS = $(CFLAGS) /MD /DNDEBUG /O2 /GL
+!ENDIF
+
+#
+# These source macros are copied from Makefile.in, except that
+# .h files have been removed.
+#
+libmnote_apple_la_SOURCES = \
+	apple\mnote-apple-entry.c	\
+	apple\exif-mnote-data-apple.c	\
+	apple\mnote-apple-tag.c
+
+libmnote_canon_la_SOURCES = \
+	canon\mnote-canon-entry.c	\
+	canon\exif-mnote-data-canon.c	\
+	canon\mnote-canon-tag.c
+
+libmnote_fuji_la_SOURCES = \
+	fuji\mnote-fuji-entry.c	\
+	fuji\exif-mnote-data-fuji.c	\
+	fuji\mnote-fuji-tag.c
+
+libmnote_olympus_la_SOURCES = \
+	olympus\mnote-olympus-entry.c	\
+	olympus\exif-mnote-data-olympus.c	\
+	olympus\mnote-olympus-tag.c
+
+libmnote_pentax_la_SOURCES = \
+	pentax\mnote-pentax-entry.c	\
+	pentax\exif-mnote-data-pentax.c	\
+	pentax\mnote-pentax-tag.c
+
+libexif_la_SOURCES = \
+	exif-byte-order.c	\
+	exif-content.c		\
+	exif-data.c		\
+	exif-entry.c		\
+	exif-format.c		\
+	exif-ifd.c		\
+	exif-loader.c		\
+	exif-log.c		\
+	exif-mem.c		\
+	exif-mnote-data.c	\
+	exif-tag.c		\
+	exif-utils.c		\
+	exif-gps-ifd.c
+
+SRCS = $(libexif_la_SOURCES) $(libmnote_apple_la_SOURCES) \
+		$(libmnote_canon_la_SOURCES) $(libmnote_fuji_la_SOURCES) \
+		$(libmnote_olympus_la_SOURCES) $(libmnote_pentax_la_SOURCES)
+
+OBJS = $(patsubsti %.c,$(BLDDIR)\\%.obj,$(SRCS))
+
+$(BLDDIR)\libexif.lib: $(OBJS)
+	lib /MACHINE:X64 /OUT:$(BLDDIR)\libexif.lib $**
+
+clean:
+	del /S /Q $(OBJS)
+	del /Q $(BLDDIR)\libexif.lib
+	del /Q $(BLDDIR)\libexif.pdb
+
+#
+# nmake doesn't allow pattern matching in the inference rules,
+# so in order to compile source in sub-directories we include
+# this Makefile and pass the sub-directory name in SUBDIR.
+#
+
+SUBDIR = 
+!INCLUDE Makefile.cl.msc
+
+SUBDIR = apple
+!INCLUDE Makefile.cl.msc
+
+SUBDIR = canon
+!INCLUDE Makefile.cl.msc
+
+SUBDIR = fuji
+!INCLUDE Makefile.cl.msc
+
+SUBDIR = olympus
+!INCLUDE Makefile.cl.msc
+
+SUBDIR = pentax
+!INCLUDE Makefile.cl.msc

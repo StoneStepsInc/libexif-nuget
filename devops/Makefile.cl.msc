@@ -1,0 +1,11 @@
+
+#
+# This Makefile is intended to be included from Makefile.msc and
+# expects all macros defined defined in the parent Makefile.
+#
+usage_cl_$(SUBDIR): ; @echo Use nmake -f Makefile.msc
+
+# Directory in /Fo must end in a slash or Release.obj will be built
+{$(SRCDIR)\$(SUBDIR)}.c{$(BLDDIR)\$(SUBDIR)}.obj:
+	if not exist $(@D) mkdir $(@D)
+	cl /c $(CFLAGS) /Fo$(@D)\ /I. $<

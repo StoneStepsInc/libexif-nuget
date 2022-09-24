@@ -1,0 +1,20 @@
+--- config.h.in	2021-11-25 05:31:22.000000000 -0500
++++ config.h	2022-09-24 16:52:29.474053700 -0400
+@@ -107,3 +107,17 @@
+ #ifndef __cplusplus
+ #undef inline
+ #endif
++
++// a few tweaks for Visual C++ 2022
++#ifdef _MSC_VER
++// signed size_t type on the x64 platform
++typedef __int64 ssize_t;
++
++//
++// When ENABLE_NLS is undefined, bindtextdomain is defined as
++// an empty parameterized macro and still requires LOCALEDIR
++// and GETTEXT_PACKAGE defined, even though they are not used.
++//
++#define GETTEXT_PACKAGE 0
++#define LOCALEDIR
++#endif
