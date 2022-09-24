@@ -113,7 +113,7 @@ jobs:
       env:
         LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
       run: |
-        mkdir "lib\x64\Debug
+        mkdir "nuget\lib\x64\Debug
         copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.lib" "nuget\lib\x64\Debug\"
         copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.pdb" "nuget\lib\x64\Debug\"
 
@@ -133,7 +133,7 @@ jobs:
       env:
         LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
       run: |
-        mkdir "lib\x64\Release
+        mkdir "nuget\lib\x64\Release
         copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.lib" "nuget\lib\x64\Release\"
         copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.pdb" "nuget\lib\x64\Release\"
 
