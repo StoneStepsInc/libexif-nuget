@@ -109,9 +109,9 @@ jobs:
       env:
         LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
       run: |
-        mkdir "nuget\native\lib\x64\Debug
-        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.lib" "nuget\native\lib\x64\Debug\"
-        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.pdb" "nuget\native\lib\x64\Debug\"
+        mkdir "nuget\build\native\lib\x64\Debug
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.lib" "nuget\build\native\lib\x64\Debug\"
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Debug\libexif.pdb" "nuget\build\native\lib\x64\Debug\"
 
     - name: Clean-up x64/Debug
       working-directory: libexif-${{ env.PKG_VER }}
@@ -129,9 +129,9 @@ jobs:
       env:
         LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
       run: |
-        mkdir "nuget\native\lib\x64\Release
-        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.lib" "nuget\native\lib\x64\Release\"
-        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.pdb" "nuget\native\lib\x64\Release\"
+        mkdir "nuget\build\native\lib\x64\Release
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.lib" "nuget\build\native\lib\x64\Release\"
+        copy /Y "${{ env.LIBEXIF_DNAME }}\build\Release\libexif.pdb" "nuget\build\native\lib\x64\Release\"
 
     - name: Clean-up x64/Release
       working-directory: libexif-${{ env.PKG_VER }}
@@ -158,7 +158,6 @@ jobs:
     - name: Make CI Nuget package
       if: ${{ github.event.inputs.publish-package != 'yes' }}
       run: |
-        dir /S /B
         nuget pack nuget\StoneSteps.libexif.Static.nuspec -Suffix "ci.%BUILD_NUMBER%" -Version ${{ env.PKG_VER }}.${{ env.PKG_REV }}
 
     - name: Upload CI Nuget package
