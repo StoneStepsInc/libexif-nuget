@@ -88,7 +88,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Download libexif
-      run: curl --output ${{ env.LIBEXIF_FNAME }} https://github.com/libexif/libexif/releases/download/v${{ env.PKG_VER }}/${{ env.LIBEXIF_FNAME }}
+      run: curl --location --output ${{ env.LIBEXIF_FNAME }} https://github.com/libexif/libexif/releases/download/v${{ env.PKG_VER }}/${{ env.LIBEXIF_FNAME }}
     
     - name: Verify libexif checksum
       run: 7z h -scrcSHA256 ${{ env.LIBEXIF_FNAME }} | findstr /C:"SHA256 for data" | call devops\check-sha256 "${{ env.LIBEXIF_SHA256 }}"
