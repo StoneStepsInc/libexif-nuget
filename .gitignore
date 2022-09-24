@@ -17,5 +17,7 @@
 
 # sample app for testing the Nuget package
 /sample-libexif/.vs/
+/sample-libexif/sample-libexif.vcxproj.user
 /sample-libexif/packages/
+/sample-libexif/packages.config
 /sample-libexif/x64/
