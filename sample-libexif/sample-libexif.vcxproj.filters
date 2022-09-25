@@ -3,7 +3,4 @@
   <ItemGroup>
     <ClCompile Include="sample-libexif.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="$(LibExifDir)lib\$(Platform)\$(Configuration)\$(LibExifName).lib" />
-  </ItemGroup>
 </Project>
