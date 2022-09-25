@@ -150,9 +150,9 @@ jobs:
       env:
         LIBEXIF_DNAME: libexif-${{ env.PKG_VER }}
       run: |
-        mkdir nuget\build\native\include
+        mkdir nuget\build\native\include\libexif
         copy ${{ env.LIBEXIF_DNAME }}\config.h nuget\build\native\include\
-        xcopy /Y /S ${{ env.LIBEXIF_DNAME }}\libexif\*.h nuget\build\native\include\
+        xcopy /Y /S ${{ env.LIBEXIF_DNAME }}\libexif\*.h nuget\build\native\include\libexif
 
       # this is an unconventional use of the pre-release version - see README.md
     - name: Make CI Nuget package
