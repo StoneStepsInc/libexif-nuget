@@ -16,7 +16,7 @@ Package Notes:
   * Built in Visual C++ 2022, against Debug/Release MT/DLL MSVC CRT
   * Localization for EXIF field names is not enabled.
 
-See libexif libexif release for details:
+See libexif release notes for details:
 
 https://github.com/libexif/libexif/releases/tag/v0.6.24
     </releaseNotes>

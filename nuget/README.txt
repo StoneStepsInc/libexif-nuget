@@ -1,5 +1,5 @@
 This package contains a static libexif library and header files
-for the x64 platform and Debug/Release configurations build with
+for the x64 platform and Debug/Release configurations built with
 Visual C++ 2022.
 
 The libexif static library appropriate for the platform and
