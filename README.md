@@ -27,6 +27,13 @@ package for projects with configurations other than `Debug` and
 See `StoneSteps.libexif.Static.props` and `StoneSteps.libexif.Static.targets`
 for specific package configuration details and file locations.
 
+Libraries in this package do not have libexif localization
+enabled and will return field names only in ASCII. This should
+not affect EXIF data, which may contain characters other than
+ASCII, even though EXIF requires ASCII. Many software packages
+will store UTF-8 characters in EXIF fields, which is a willful
+violation of the EXIF specification.
+
 ## Building a Nuget Package
 
 This project can build a Nuget package for libexif either locally
