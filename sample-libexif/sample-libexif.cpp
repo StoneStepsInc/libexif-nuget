@@ -10,22 +10,29 @@ int main(int argc, char **argv)
       return 1;
    }
 
-   ExifData* ed = exif_data_new_from_file(argv[1]);
+   ExifData *ed = exif_data_new_from_file(argv[1]);
 
    if(!ed) {
       printf("Cannot read EXIF in file %s\n", argv[1]);
       return 2;
    }
 
-   char buf[60];
+   char buf[60];              // long entries will be truncated
 
-   std::string make;    // camera make for the maker notes prefix
+   std::string tag_make;      // camera make for the maker notes prefix
 
    ExifEntry *entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_MAKE);
-
    exif_entry_get_value(entry, buf, sizeof(buf));
+   tag_make = buf;
 
-   make = buf;
+   // byte order may be used to interpret numeric entry values
+   ExifByteOrder byte_order = exif_data_get_byte_order(ed);
+   entry = exif_content_get_entry(ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_FNUMBER);
+
+   if(entry && entry->format == EXIF_FORMAT_RATIONAL) {
+      ExifRational rt_value = exif_get_rational(entry->data, byte_order);
+      printf("EXIF_TAG_FNUMBER: %.1lf\n", (double) rt_value.numerator/ (double) rt_value.denominator);
+   }
 
    // print all generic EXIF tags
    for(size_t i = 0; i < EXIF_IFD_COUNT; i++) {
@@ -35,7 +42,10 @@ int main(int argc, char **argv)
 
             if(entry) {
                exif_entry_get_value(entry, buf, sizeof(buf));
-               printf("%s: %s\t: %s\n", exif_ifd_get_name((ExifIfd) i), exif_tag_get_name_in_ifd(entry->tag, (ExifIfd) i), buf);
+               printf("%s: %s (%s/%u/%u*%lu)\t: %s\n", exif_ifd_get_name((ExifIfd) i), exif_tag_get_name_in_ifd(entry->tag, (ExifIfd) i),
+                                                         exif_format_get_name(entry->format), entry->size,
+                                                         exif_format_get_size(entry->format), entry->components,
+                                                         buf);
             }
          }
       }
@@ -52,7 +62,10 @@ int main(int argc, char **argv)
          const char *name = exif_mnote_data_get_name(mn, i);
 
          if(name && exif_mnote_data_get_value(mn, i, buf, sizeof(buf)))
-            printf("%s: %s\t: %s\n", make.c_str(), exif_mnote_data_get_name(mn, i), buf);
+            printf("%s: %s (%s/%u/%u*%lu)\t: %s\n", tag_make.c_str(), exif_mnote_data_get_name(mn, i),
+                                                      exif_format_get_name(entry->format), entry->size,
+                                                      exif_format_get_size(entry->format), entry->components,
+                                                      buf);
       }
    }
 
