@@ -76,4 +76,4 @@ rem
 rem Create a package
 rem
 
-nuget pack nuget\StoneSteps.libexif.Static.nuspec -Version %PKG_VER%.%PKG_REV%
+nuget pack nuget\StoneSteps.libexif.VS2022.Static.nuspec -Version %PKG_VER%.%PKG_REV%

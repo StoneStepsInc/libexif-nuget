@@ -24,7 +24,8 @@ not work for any other configuration names. Do not install this
 package for projects with configurations other than `Debug` and
 `Release`.
 
-See `StoneSteps.libexif.Static.props` and `StoneSteps.libexif.Static.targets`
+See `StoneSteps.libexif.VS2022.Static.props` and
+`StoneSteps.libexif.VS2022.Static.targets`
 for specific package configuration details and file locations.
 
 Libraries in this package do not have libexif localization
@@ -81,7 +82,7 @@ to build a package with the revision `123`.
 libexif version is located in a few places in this repository and
 needs to be changed in all of them for a new version of libexif.
 
-  * nuget/StoneSteps.libexif.Static.nuspec (`version`)
+  * nuget/StoneSteps.libexif.VS2022.Static.nuspec (`version`)
   * devops/make-package.bat (`PKG_VER`, `PKG_REV`, `LIBEXIF_FNAME`,
     `LIBEXIF_SHA256`)
   * .github/workflows/build-nuget-package.yml (`name`, `PKG_VER`,
@@ -148,4 +149,4 @@ In order to build `sample-libexif.exe`, open Nuget Package manager
 in the solution and install either the locally-built Nuget package
 or the one from [nuget.org][].
 
-[nuget.org]: https://www.nuget.org/packages/StoneSteps.libexif.Static/
+[nuget.org]: https://www.nuget.org/packages/StoneSteps.libexif.VS2022.Static/

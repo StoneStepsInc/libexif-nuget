@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>StoneSteps.libexif.Static</id>
+    <id>StoneSteps.libexif.VS2022.Static</id>
     <version>0.6.24</version>
     <authors>Lutz Mueller, Curtis Galloway, and others</authors>
     <owners>Stone Steps (package)</owners>
@@ -20,8 +20,8 @@ See libexif release notes for details:
 
 https://github.com/libexif/libexif/releases/tag/v0.6.24
     </releaseNotes>
-    <copyright>Jean-loup Gailly, Mark Adler</copyright>
-    <tags>libexif,native,library</tags>
+    <copyright>Lutz Mueller, Curtis Galloway, and others</copyright>
+    <tags>EXIF,libexif,native,library</tags>
   </metadata>
   <files>
    <file src="README.txt" target=""/>
