@@ -30,7 +30,7 @@ on:
   workflow_dispatch:
     inputs:
       publish-package:
-        description: Publish Nuget Package?
+        description: Publish Nuget Package (yes/no)?
         required: false
 
 #
@@ -81,7 +81,7 @@ jobs:
     
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Download libexif
       run: curl --location --output ${{ env.LIBEXIF_FNAME }} https://github.com/libexif/libexif/releases/download/v${{ env.PKG_VER }}/${{ env.LIBEXIF_FNAME }}
