@@ -20,13 +20,18 @@ CFLAGS  = /nologo /W3 /Zi /Fd$(BLDDIR)\libexif.pdb /D_CRT_SECURE_NO_WARNINGS
 # /MDd uses a debug version of MSVC CRT in a DLL
 # /MD uses MSVC CRT in a DLL
 # /Od disables optimizations
-# /GL enables whole program optimization
 # /O2 favors fast code
+#
+# Must not use /GL (Whole program optimization) and /LTCG (Link-time
+# code generation) because each requires the same major and minor
+# compiler version for all objects. See this page for details:
+#
+# https://learn.microsoft.com/en-us/cpp/porting/binary-compat-2015-2017?view=msvc-170
 #
 !IFDEF DEBUG
 CFLAGS = $(CFLAGS) /MDd /Od
 !ELSE
-CFLAGS = $(CFLAGS) /MD /DNDEBUG /O2 /GL
+CFLAGS = $(CFLAGS) /MD /DNDEBUG /O2
 !ENDIF
 
 #
